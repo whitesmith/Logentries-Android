@@ -180,7 +180,6 @@ public class Utils {
         sb.append(Utils.getFormattedTraceID(isUsingHttp)).append(" ");
         sb.append(isUsingHttp ? ", " : " ");
 
-
         sb.append(Utils.getFormattedDeviceId(isUsingHttp)).append(" ");
         sb.append(isUsingHttp ? ", " : " ");
 

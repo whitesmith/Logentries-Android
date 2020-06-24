@@ -50,11 +50,6 @@ public class AsyncLoggingWorker {
     private boolean started = false;
 
     /**
-     * Whether should send logs with or without meta data
-     */
-    private boolean sendRawLogMessage = false;
-
-    /**
      * Asynchronous socket appender.
      */
     private SocketAppender appender;
@@ -78,7 +73,7 @@ public class AsyncLoggingWorker {
 
         queue = new ArrayBlockingQueue<String>(QUEUE_SIZE);
         localStorage = new LogStorage(context);
-        appender = new SocketAppender(useHttpPost, useSsl, useDataHub, dataHubAddress, dataHubPort, logToken, logHostName, this.sendRawLogMessage);
+        appender = new SocketAppender(useHttpPost, useSsl, useDataHub, dataHubAddress, dataHubPort, logToken, logHostName);
         appender.start();
         started = true;
     }
@@ -96,16 +91,7 @@ public class AsyncLoggingWorker {
         this(context, useSsl, false, true, logToken, dataHubAddr, dataHubPort, true);
     }
 
-    public void setSendRawLogMessage(boolean sendRawLogMessage){
-        this.sendRawLogMessage = sendRawLogMessage;
-    }
-
-    public boolean getSendRawLogMessage(){
-        return sendRawLogMessage;
-    }
-
     public void addLineToQueue(String line) {
-
         // Check that we have all parameters set and socket appender running.
         if (!this.started) {
 
@@ -155,7 +141,6 @@ public class AsyncLoggingWorker {
     }
 
     private static boolean checkTokenFormat(String token) {
-
         return Utils.checkValidUUID(token);
     }
 
@@ -195,10 +180,9 @@ public class AsyncLoggingWorker {
         private int dataHubPort;
         private String token;
         private boolean logHostName = true;
-        private boolean sendRawLogMessage = false;
 
         public SocketAppender(boolean useHttpPost, boolean useSsl, boolean isUsingDataHub, String dataHubAddr, int dataHubPort,
-                              String token, boolean logHostName, boolean sendRawLogMessage) {
+                              String token, boolean logHostName) {
             super("Logentries Socket appender");
 
             // Don't block shut down
@@ -211,7 +195,6 @@ public class AsyncLoggingWorker {
             this.dataHubPort = dataHubPort;
             this.token = token;
             this.logHostName = logHostName;
-            this.sendRawLogMessage = sendRawLogMessage;
         }
 
         private void openConnection() throws IOException, InstantiationException {
@@ -261,11 +244,7 @@ public class AsyncLoggingWorker {
 
                 logs = localStorage.getAllLogsFromStorage(false);
                 for (String msg = logs.peek(); msg != null; msg = logs.peek()) {
-                    if(sendRawLogMessage){
-                        leClient.write(Utils.formatMessage(msg.replace("\n", LINE_SEP_REPLACER),logHostName, useHttpPost));
-                    }else{
-                        leClient.write(msg.replace("\n", LINE_SEP_REPLACER));
-                    }
+                    leClient.write(msg.replace("\n", LINE_SEP_REPLACER));
                     logs.poll(); // Remove the message after successful sending.
                 }
 

@@ -15,14 +15,13 @@ public class AndroidLogger {
         loggingWorker = new AsyncLoggingWorker(context, useSsl, useHttpPost, isUsingDataHub, token, dataHubAddr, dataHubPort, logHostName);
     }
 
-    public static synchronized AndroidLogger createInstance(Context context, boolean useHttpPost, boolean useSsl, boolean isUsingDataHub,
-                                                            String dataHubAddr, int dataHubPort, String token, boolean logHostName)
+    public static synchronized AndroidLogger init(Context context, String token)
             throws IOException {
         if (instance != null) {
             instance.loggingWorker.close();
         }
 
-        instance = new AndroidLogger(context, useHttpPost, useSsl, isUsingDataHub, dataHubAddr, dataHubPort, token, logHostName);
+        instance = new AndroidLogger(context, false, false, false, null, 0, token, false);
         return instance;
     }
 
@@ -30,24 +29,8 @@ public class AndroidLogger {
         if (instance != null) {
             return instance;
         } else {
-            throw new IllegalArgumentException("Logger instance is not initialized. Call createInstance() first!");
+            throw new IllegalArgumentException("Logger instance is not initialized. Call init() first!");
         }
-    }
-
-    /**
-     *  Set whether you wish to send your log message without additional meta data to Logentries.
-     * @param sendRawLogMessage Set to true if you wish to send raw log messages
-     */
-    public void setSendRawLogMessage(boolean sendRawLogMessage){
-        loggingWorker.setSendRawLogMessage(sendRawLogMessage);
-    }
-
-    /**
-     *  Returns whether the logger is configured to send raw log messages or not.
-     * @return
-     */
-    public boolean getSendRawLogMessage(){
-        return loggingWorker.getSendRawLogMessage();
     }
 
     public void log(String message) {
