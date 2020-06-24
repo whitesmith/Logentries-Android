@@ -94,7 +94,6 @@ public class AsyncLoggingWorker {
     public void addLineToQueue(String line) {
         // Check that we have all parameters set and socket appender running.
         if (!this.started) {
-
             appender.start();
             started = true;
         }
@@ -103,7 +102,6 @@ public class AsyncLoggingWorker {
             for (String logChunk : Utils.splitStringToChunks(line, LOG_LENGTH_LIMIT)) {
                 tryOfferToQueue(logChunk);
             }
-
         } else {
             tryOfferToQueue(line);
         }
@@ -241,7 +239,6 @@ public class AsyncLoggingWorker {
             Queue<String> logs = new ArrayDeque<String>();
 
             try {
-
                 logs = localStorage.getAllLogsFromStorage(false);
                 for (String msg = logs.peek(); msg != null; msg = logs.peek()) {
                     leClient.write(msg.replace("\n", LINE_SEP_REPLACER));
