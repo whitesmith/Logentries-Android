@@ -36,7 +36,7 @@ public class MyActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		try {
-			logger = Logentries.init(getApplicationContext(), "159axea4-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
+			logger = Logentries.init(this, "159axea4-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
