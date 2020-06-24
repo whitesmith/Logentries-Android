@@ -318,8 +318,7 @@ public class AsyncLoggingWorker {
                             }
 
                             if (message != null) {
-                                this.leClient.write(Utils.formatMessage(message.replace("\n", LINE_SEP_REPLACER),
-                                        logHostName, useHttpPost));
+                                this.leClient.write(message.replace("\n", LINE_SEP_REPLACER));
                                 message = null;
                             }
 
